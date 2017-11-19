@@ -8,10 +8,12 @@ namespace Lib
     {
         Initialize();
     }
+
     // デストラクタ
     Window::~Window()
     {
     }
+
     // 初期化
     int Window::Initialize()
     {
@@ -26,15 +28,18 @@ namespace Lib
 
         return 0;
     }
+    
     // hWndの取得
     HWND Window::getHWND() const
     {
         return hWnd;
     }
-    //Dimention<int> Window::getWindowSize() const
-    //{
-    //    return windowSize;
-    //}
+
+    RECT Window::getWindowRect() const
+    {
+        return windowRect;
+    }
+    
     // ウィンドウの初期化
     HRESULT Window::InitWindow(HINSTANCE hInstance, int nCmdShow)
     {
@@ -57,16 +62,16 @@ namespace Lib
         }
 
         // ウィンドウの作成
-        RECT rect = { 0, 0, static_cast<LONG>(800), static_cast<LONG>(450) };
-        AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
+        windowRect = { 0, 0, static_cast<LONG>(800), static_cast<LONG>(450) };
+        AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
         hWnd = CreateWindow(
             windowName,				// ウィンドウクラス名
             windowName,				// ウィンドウタイトル
             WS_OVERLAPPEDWINDOW,    // ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE,	// ウィンドウスタイル
             CW_USEDEFAULT,			// Y座標の初期値
             CW_USEDEFAULT,			// X座標の初期値
-            rect.right - rect.left, // 幅の初期値
-            rect.bottom - rect.top, // 高さの初期値
+            windowRect.right  - windowRect.left, // 幅の初期値
+            windowRect.bottom - windowRect.top, // 高さの初期値
             nullptr,				// 親ウィンドウのハンドル
             nullptr,				// ウィンドウメニュー
             hInstance,				// インスタンスハンドル

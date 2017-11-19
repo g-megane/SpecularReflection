@@ -1,4 +1,6 @@
 #pragma once
+#ifndef WINDOW_H
+#define WINDOW_H
 #ifndef STRICT
 #define STRICT
 #endif
@@ -23,7 +25,7 @@ namespace Lib
 
         MSG Update();
         HWND getHWND() const;
-        //Dimention<int> getWindowSize() const;
+        RECT getWindowRect() const;
 
     private:
         HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
@@ -32,6 +34,7 @@ namespace Lib
 
         LPCWSTR windowName;
         HWND hWnd;
-        //imention<int> windowSize;
+        RECT windowRect;
     };
 }
+#endif
