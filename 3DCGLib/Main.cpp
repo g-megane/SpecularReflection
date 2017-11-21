@@ -16,6 +16,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     while (w->Update().message != WM_QUIT) {
         directx->begineFrame();
 
+        directx->render();
+
         directx->endFrame();
     }
 
