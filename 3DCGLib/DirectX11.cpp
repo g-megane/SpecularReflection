@@ -9,9 +9,9 @@ namespace Lib
     DirectX11::DirectX11(std::shared_ptr<Window> _window)
         :window(_window)
     {
-        device           = nullptr;
-        deviceContext    = nullptr;
-        swapChain        = nullptr;
+        device = nullptr;
+        deviceContext = nullptr;
+        swapChain = nullptr;
         renderTargetView = nullptr;
         initDevice();
     }
@@ -24,7 +24,7 @@ namespace Lib
     // フレームの開始
     void DirectX11::begineFrame() const
     {
-        float ClearColor[4] { 0.0f, 0.125f, 0.3f, 1.0f };
+        float ClearColor[4]{ 0.0f, 0.125f, 0.3f, 1.0f };
         deviceContext->ClearRenderTargetView(renderTargetView.Get(), ClearColor);
     }
 
@@ -34,9 +34,9 @@ namespace Lib
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
         ConstantBuffer cb;
-        cb.world = XMMatrixTranspose(world);
-        cb.view  = XMMatrixTranspose(view);
-        cb.projection = XMMatrixTranspose(projection);
+        cb.world = Matrix<float>::transpose(world);
+        cb.view = Matrix<float>::transpose(view);
+        cb.projection = Matrix<float>::transpose(projection);
         deviceContext->UpdateSubresource(constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
 
         deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
@@ -144,17 +144,17 @@ namespace Lib
         // 深度ステンシル用テクスチャリソースを作成
         D3D11_TEXTURE2D_DESC descDepth;
         ZeroMemory(&descDepth, sizeof(descDepth));
-        descDepth.Width              = windowWidth;                   // テクスチャーの幅(バックバッファと同じサイズを指定)
-        descDepth.Height             = windowHeight;                  // テクスチャーの高さ(バックバッファと同じサイズを指定)
-        descDepth.MipLevels          = 1;                             // ミップマップレベルの最大数
-        descDepth.ArraySize          = 1;                             // テクスチャー配列内のテクスチャーの数
-        descDepth.Format             = DXGI_FORMAT_D24_UNORM_S8_UINT; // テクスチャーのフォーマット
-        descDepth.SampleDesc.Count   = 1;                             // ピクセル単位のマルチサンプリング数
+        descDepth.Width = windowWidth;                   // テクスチャーの幅(バックバッファと同じサイズを指定)
+        descDepth.Height = windowHeight;                  // テクスチャーの高さ(バックバッファと同じサイズを指定)
+        descDepth.MipLevels = 1;                             // ミップマップレベルの最大数
+        descDepth.ArraySize = 1;                             // テクスチャー配列内のテクスチャーの数
+        descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // テクスチャーのフォーマット
+        descDepth.SampleDesc.Count = 1;                             // ピクセル単位のマルチサンプリング数
         descDepth.SampleDesc.Quality = 0;                             // イメージの品質レベル
-        descDepth.Usage              = D3D11_USAGE_DEFAULT;           // テクスチャーの読み込みおよび書き込み方法を識別する値
-        descDepth.BindFlags          = D3D11_BIND_DEPTH_STENCIL;      // パイプラインステージへのバインドに関するフラグ
-        descDepth.CPUAccessFlags     = 0;                             // 許可するCPUアクセスの種類を指定売るフラグ
-        descDepth.MiscFlags          = 0;                             // 他の一般性の低いリソースオプションを識別するフラグ
+        descDepth.Usage = D3D11_USAGE_DEFAULT;           // テクスチャーの読み込みおよび書き込み方法を識別する値
+        descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;      // パイプラインステージへのバインドに関するフラグ
+        descDepth.CPUAccessFlags = 0;                             // 許可するCPUアクセスの種類を指定売るフラグ
+        descDepth.MiscFlags = 0;                             // 他の一般性の低いリソースオプションを識別するフラグ
         hr = device->CreateTexture2D(&descDepth, nullptr, depthStencil.GetAddressOf());
         if (FAILED(hr)) {
             MessageBox(nullptr, L"CreateTexture2D()の失敗 : " + hr, L"Error", MB_OK);
@@ -164,8 +164,8 @@ namespace Lib
         // 深度ステンシルビューからアクセス可能なテクスチャーのサブリソースを指定
         D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
         ZeroMemory(&descDSV, sizeof(descDSV));
-        descDSV.Format             = descDepth.Format;              // リソースデータのフォーマット
-        descDSV.ViewDimension      = D3D11_DSV_DIMENSION_TEXTURE2D; // リソースのタイプ
+        descDSV.Format = descDepth.Format;              // リソースデータのフォーマット
+        descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D; // リソースのタイプ
         descDSV.Texture2D.MipSlice = 0;                             // 最初に使用するミップマップレベルのインデックス
         // リソースデータへのアクセス用に深度ステンシルビューの作成
         hr = device->CreateDepthStencilView(depthStencil.Get(), &descDSV, depthStencilView.GetAddressOf());
@@ -175,15 +175,15 @@ namespace Lib
         }
         // 深度ステンシルビューをターゲットにセット
         deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
-   
+
         // Viewportの初期化
         D3D11_VIEWPORT vp;
-        vp.Width    = static_cast<FLOAT>(windowWidth);  // ビューポート左側のx位置
-        vp.Height   = static_cast<FLOAT>(windowHeight); // ビューポート上側のy位置
+        vp.Width = static_cast<FLOAT>(windowWidth);  // ビューポート左側のx位置
+        vp.Height = static_cast<FLOAT>(windowHeight); // ビューポート上側のy位置
         vp.MinDepth = 0.0f;                             // ビューポート幅
         vp.MaxDepth = 1.0f;                             // ビューポートの高さ
-        vp.TopLeftX =   0;                              // ビューポートの最小深度(0～1)
-        vp.TopLeftY =   0;                              // ビューポートの最大深度(0～1)
+        vp.TopLeftX = 0;                              // ビューポートの最小深度(0～1)
+        vp.TopLeftY = 0;                              // ビューポートの最大深度(0～1)
         deviceContext->RSSetViewports(1, &vp);
 
         // VertexShaderの読み込み
@@ -234,21 +234,21 @@ namespace Lib
         // VertexBufferの定義
         SimpleVertex vertices[] =
         {
-            { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
-            { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
-            { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) },
-            { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
-            { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
-            { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) },
-            { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-            { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) },
+            { { -1.0f,  1.0f, -1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
+            { {  1.0f,  1.0f, -1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+            { {  1.0f,  1.0f,  1.0f }, { 0.0f, 1.0f, 1.0f, 1.0f } },
+            { { -1.0f,  1.0f,  1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+            { { -1.0f, -1.0f, -1.0f }, { 1.0f, 0.0f, 1.0f, 1.0f } },
+            { {  1.0f, -1.0f, -1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f } },
+            { {  1.0f, -1.0f,  1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
+            { { -1.0f, -1.0f,  1.0f }, { 0.0f, 0.0f, 0.0f, 1.0f } },
         };
-        
+
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
-        bd.Usage          = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth      = sizeof(SimpleVertex) * 8;
-        bd.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = sizeof(SimpleVertex) * 8;
+        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         bd.CPUAccessFlags = 0;
 
         D3D11_SUBRESOURCE_DATA initData;
@@ -266,7 +266,7 @@ namespace Lib
         deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
         // 頂点バッファの作成
-        WORD indices[] = 
+        WORD indices[] =
         {
             3, 1, 0,
             2, 1, 3,
@@ -286,11 +286,11 @@ namespace Lib
             6, 4, 5,
             7, 4, 6,
         };
-        bd.Usage          = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth      = sizeof(WORD) * 36; // 36頂点、12三角形
-        bd.BindFlags      = D3D11_BIND_INDEX_BUFFER;
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = sizeof(WORD) * 36; // 36頂点、12三角形
+        bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
         bd.CPUAccessFlags = 0;
-        initData.pSysMem  = indices;
+        initData.pSysMem = indices;
         hr = device->CreateBuffer(&bd, &initData, indexBuffer.GetAddressOf());
         if (FAILED(hr)) {
             MessageBox(nullptr, L"createBuffer()の失敗", L"Error", MB_OK);
@@ -304,9 +304,9 @@ namespace Lib
         deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         // ConstantBufferの作成
-        bd.Usage          = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth      = sizeof(ConstantBuffer);
-        bd.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = sizeof(ConstantBuffer);
+        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         bd.CPUAccessFlags = 0;
         hr = device->CreateBuffer(&bd, nullptr, constantBuffer.GetAddressOf());
         if (FAILED(hr)) {
@@ -315,16 +315,16 @@ namespace Lib
         }
 
         // WorldMatrixの初期化
-        world = XMMatrixIdentity();
-                
+        world = Matrix<float>::Identify;
+
         // ViewMatrixの初期化
-        XMVECTOR eye = XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f);
-        XMVECTOR at  = XMVectorSet(0.0f, 1.0f,  0.0f, 0.0f);
-        XMVECTOR up  = XMVectorSet(0.0f, 1.0f,  0.0f, 0.0f);
-        view = XMMatrixLookAtLH(eye, at, up);
+        Vector3<float> eye = Vector3<float>(0.0f, 1.0f, -5.0f);  // カメラの座標
+        Vector3<float> at  = Vector3<float>(0.0f, 1.0f,  0.0f);  // 注視対象
+        Vector3<float> up  = Vector3<float>(0.0f, 1.0f,  0.0f);  // 現在のワールド座標の上方向
+        //view = XMMatrixLookAtLH(eye, at, up);
 
         // ProjectionMatrixの初期化
-        projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, windowWidth / static_cast<FLOAT>(windowHeight), 0.01f, 100.0f);
+        //projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, windowWidth / static_cast<FLOAT>(windowHeight), 0.01f, 100.0f);
 
         return S_OK;
     }
@@ -366,3 +366,4 @@ namespace Lib
 
         return Microsoft::WRL::ComPtr<ID3DBlob>(blobOut);
     }
+}

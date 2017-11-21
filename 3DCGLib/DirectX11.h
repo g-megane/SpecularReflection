@@ -7,6 +7,7 @@
 #include <memory>
 #include <DirectXMath.h>
 #include "Window.h"
+#include "Matrix.h"
 
 #pragma comment(lib, "d3d11.lib")
 
@@ -31,15 +32,15 @@ namespace Lib
        
         struct SimpleVertex
         {
-            XMFLOAT3 pos;
-            XMFLOAT4 color;
+            float pos[3];
+            float color[4];
         };
 
         struct ConstantBuffer 
         {
-            XMMATRIX world;
-            XMMATRIX view;
-            XMMATRIX projection;
+            Matrix<float> world;
+            Matrix<float> view;
+            Matrix<float> projection;
         };
 
         ComPtr<ID3D11Device>           device;
@@ -58,9 +59,9 @@ namespace Lib
         D3D_FEATURE_LEVEL featureLevel;
         D3D_DRIVER_TYPE   driverType;
 
-        XMMATRIX world;
-        XMMATRIX view;
-        XMMATRIX projection;
+        Matrix<float> world;
+        Matrix<float> view;
+        Matrix<float> projection;
 
         std::shared_ptr<Window> window;
     };
