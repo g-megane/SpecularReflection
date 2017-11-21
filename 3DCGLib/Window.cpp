@@ -62,7 +62,7 @@ namespace Lib
         }
 
         // ウィンドウの作成
-        windowRect = { 0, 0, static_cast<LONG>(800), static_cast<LONG>(450) };
+        windowRect = { 0, 0, static_cast<LONG>(1024), static_cast<LONG>(768) };
         AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
         hWnd = CreateWindow(
             windowName,				// ウィンドウクラス名
