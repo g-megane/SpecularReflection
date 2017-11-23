@@ -31,6 +31,18 @@ namespace Lib
 
     void DirectX11::render()
     {
+        // 回転
+        static float t = 0.0f;
+        static DWORD dwTimeStart = 0;
+        DWORD dwTimeCur = GetTickCount();
+        if (dwTimeStart == 0)
+            dwTimeStart = dwTimeCur;
+        t = (dwTimeCur - dwTimeStart) / 1000.0f;
+           
+        auto mtr = Matrix<float>::rotateY(t);
+        auto mtt = Matrix<float>::translate(Vector3<float>(0.0f, -1.0f, 0.0f));
+        world = mtr * mtt;
+        
         // Zバッファーのクリア
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
