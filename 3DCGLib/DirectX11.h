@@ -5,7 +5,6 @@
 #include <d3d11_2.h>
 #include <wrl\client.h>
 #include <memory>
-#include <DirectXMath.h>
 #include "Window.h"
 #include "Matrix.h"
 
@@ -14,7 +13,6 @@
 namespace Lib
 {
     using namespace Microsoft::WRL;
-    using namespace DirectX;
 
     class DirectX11
     {
