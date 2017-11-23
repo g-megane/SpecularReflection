@@ -103,12 +103,35 @@ namespace Lib
                 matrix.m14, matrix.m24, matrix.m34, matrix.m44
             );
         }
+        // 左手座標系ビュー行列の作成
         template<class U>
         static Matrix LookAtLH(const Vector3<U> cameraPos, const Vector3<U> cameraTarget, const Vector3<U> cameraUpVec)
         {
-            
-        }
+            Vector3<U> zAxis = Vector3<U>(cameraTarget - cameraPos).normalize();
+            Vector3<U> xAxis = Vector3<U>(cameraUpVec.cross(zAxis)).normalize();
+            Vector3<U> yAxis = zAxis.cross(xAxis);
 
+            return Matrix<U>(
+                xAxis.x,                yAxis.x,               zAxis.x,              static_cast<U>(0),
+                xAxis.y,                yAxis.y,               zAxis.y,              static_cast<U>(0),
+                xAxis.z,                yAxis.z,               zAxis.z,              static_cast<U>(0),
+                -xAxis.dot(cameraPos), -yAxis.dot(cameraPos), -zAxis.dot(cameraPos), static_cast<U>(1)
+            );
+        }
+        // 左手座標系パースペクティブ射影行列を作成
+        template<class U>
+        static Matrix perspectiveFovLH(U fieldOfViewY, U aspectRatio, U znearPlane, U zfarPlane)
+        {
+            U h = static_cast<U>(1) / static_cast<U>(std::tan(fieldOfViewY / 2.0f));
+            U w = h / aspectRatio;
+            
+            return Matrix(
+                                w, static_cast<U>(0),                                  static_cast<U>(0), static_cast<U>(0),
+                static_cast<U>(0),                 h,                                  static_cast<U>(0), static_cast<U>(0),
+                static_cast<U>(0), static_cast<U>(0),               zfarPlane / (zfarPlane - znearPlane), static_cast<U>(1),
+                static_cast<U>(0), static_cast<U>(0), -znearPlane * zfarPlane / (zfarPlane - znearPlane), static_cast<U>(0)
+            );
+        }
 
         // 演算子オーバーロード
         Matrix& operator+=(const Matrix& other)
