@@ -65,9 +65,31 @@ namespace Lib
             tmp.m43 = static_cast<T>(z);
             return tmp;
         }
-        // ‰ñ“]
+        // xŽ²‰ñ“]
         template<class U>
-        static Matrix rotate(const U& angle)
+        static Matrix rotateX(const U& angle)
+        {
+            Matrix tmp;
+            tmp.m22 =  std::cos(static_cast<T>(angle));
+            tmp.m23 =  std::sin(static_cast<T>(angle));
+            tmp.m32 = -std::sin(static_cast<T>(angle));
+            tmp.m33 =  std::cos(static_cast<T>(angle));
+            return tmp;
+        }
+        // yŽ²‰ñ“]
+        template<class U>
+        static Matrix rotateY(const U& angle)
+        {
+            Matrix tmp;
+            tmp.m11 =  std::cos(static_cast<T>(angle));
+            tmp.m13 = -std::sin(static_cast<T>(angle));
+            tmp.m31 =  std::sin(static_cast<T>(angle));
+            tmp.m33 =  std::cos(static_cast<T>(angle));
+            return tmp;
+        }
+        // zŽ²‰ñ“]
+        template<class U>
+        static Matrix rotateZ(const U& angle)
         {
             Matrix tmp;
             tmp.m11 =  std::cos(static_cast<T>(angle));
