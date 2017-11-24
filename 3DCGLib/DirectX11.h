@@ -36,9 +36,9 @@ namespace Lib
 
         struct ConstantBuffer 
         {
-            Matrix<float> world;
-            Matrix<float> view;
-            Matrix<float> projection;
+            Matrix world;
+            Matrix view;
+            Matrix projection;
         };
 
         ComPtr<ID3D11Device>           device;
@@ -57,9 +57,9 @@ namespace Lib
         D3D_FEATURE_LEVEL featureLevel;
         D3D_DRIVER_TYPE   driverType;
 
-        Matrix<float> world;
-        Matrix<float> view;
-        Matrix<float> projection;
+        Matrix world;
+        Matrix view;
+        Matrix projection;
 
         std::shared_ptr<Window> window;
     };

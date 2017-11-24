@@ -39,17 +39,17 @@ namespace Lib
             dwTimeStart = dwTimeCur;
         t = (dwTimeCur - dwTimeStart) / 1000.0f;
            
-        auto mtr = Matrix<float>::rotateY(t);
-        auto mtt = Matrix<float>::translate(Vector3<float>(0.0f, -1.0f, 0.0f));
+        auto mtr = Matrix::rotateY(t);
+        auto mtt = Matrix::translate(Vector3(0.0f, -1.0f, 0.0f));
         world = mtr * mtt;
         
         // Zバッファーのクリア
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
         ConstantBuffer cb;
-        cb.world      = Matrix<float>::transpose(world);
-        cb.view       = Matrix<float>::transpose(view);
-        cb.projection = Matrix<float>::transpose(projection);
+        cb.world      = Matrix::transpose(world);
+        cb.view       = Matrix::transpose(view);
+        cb.projection = Matrix::transpose(projection);
         deviceContext->UpdateSubresource(constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
 
         deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
@@ -328,16 +328,16 @@ namespace Lib
         }
 
         // WorldMatrixの初期化
-        world = Matrix<float>::Identify;
+        world = Matrix::Identify;
 
         // ViewMatrixの初期化
-        Vector3<float> eye = Vector3<float>(0.0f, 1.0f, -5.0f);  // カメラの座標
-        Vector3<float> at  = Vector3<float>(0.0f, 1.0f,  0.0f);  // 注視対象
-        Vector3<float> up  = Vector3<float>(0.0f, 1.0f,  0.0f);  // 現在のワールド座標の上方向
-        view = Matrix<float>::LookAtLH(eye, at, up);
+        Vector3 eye = Vector3(0.0f, 1.0f, -5.0f); // カメラの座標
+        Vector3 at  = Vector3(0.0f, 1.0f,  0.0f); // 注視対象
+        Vector3 up  = Vector3(0.0f, 1.0f,  0.0f); // 現在のワールド座標の上方向
+        view = Matrix::LookAtLH(eye, at, up);
 
         // ProjectionMatrixの初期化
-        projection = Matrix<float>::perspectiveFovLH(Lib::PIDIV2, windowWidth / static_cast<float>(windowHeight), 0.01f, 100.0f);
+        projection = Matrix::perspectiveFovLH(Lib::PIDIV2, windowWidth / static_cast<float>(windowHeight), 0.01f, 100.0f);
         return S_OK;
     }
 
