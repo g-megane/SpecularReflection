@@ -3,17 +3,20 @@
 
 namespace Lib
 {
+    // コンストラクタ
     Model::Model()
     {
         world = Matrix::Identify;
         init();
     }
 
+    // デストラクタ
     Model::~Model()
     {
     }
 
-    void Model::render(Matrix &mtWorld, Color &color)
+    // モデルの描画
+    void Model::render(Color &color)
     {
         auto &directX = DirectX11::getInstance();
 
@@ -29,11 +32,19 @@ namespace Lib
         directX.getDeviceContext()->DrawIndexed(36, 0, 0);
     }
 
+    // ワールド行列を設定
     void Model::setWorldMatrix(Matrix & _world)
     {
         world = _world;
     }
 
+    // ワールド行列を取得
+    Matrix Model::getWorldMatrix() const
+    {
+        return world;
+    }
+
+    // 初期化
     HRESULT Model::init()
     {
         auto &directX = DirectX11::getInstance();
@@ -157,9 +168,9 @@ namespace Lib
         directX.getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         // ConstantBufferの作成
-        bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(ConstantBuffer);
-        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bd.Usage          = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth      = sizeof(ConstantBuffer);
+        bd.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
         bd.CPUAccessFlags = 0;
         hr = directX.getDevice()->CreateBuffer(&bd, nullptr, constantBuffer.GetAddressOf());
         if (FAILED(hr)) {

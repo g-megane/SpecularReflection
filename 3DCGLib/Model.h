@@ -14,12 +14,12 @@ namespace Lib
         Model();
         ~Model();
 
-        void render(Matrix &mtWorld, Color &color);
+        void render(Color &color);
 
         void setWorldMatrix(Matrix &_world);
+        Matrix getWorldMatrix() const;
         
     private:
-
         HRESULT init();
         ComPtr<ID3DBlob> shaderCompile(WCHAR* filename, LPCSTR entryPoint, LPCSTR shaderModel);
 
