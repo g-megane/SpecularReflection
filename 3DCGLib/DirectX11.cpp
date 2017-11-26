@@ -7,14 +7,12 @@
 namespace Lib
 {
     // コンストラクタ
-    DirectX11::DirectX11(std::shared_ptr<Window> _window)
-        :window(_window)
+    DirectX11::DirectX11()
     {
         device = nullptr;
         deviceContext = nullptr;
         swapChain = nullptr;
         renderTargetView = nullptr;
-        initDevice();
     }
 
     // デストラクタ
@@ -27,36 +25,38 @@ namespace Lib
     {
         float ClearColor[4]{ 0.0f, 0.125f, 0.3f, 1.0f };
         deviceContext->ClearRenderTargetView(renderTargetView.Get(), ClearColor);
-    }
-
-    void DirectX11::render()
-    {
-        // 回転
-        static float t = 0.0f;
-        static DWORD dwTimeStart = 0;
-        DWORD dwTimeCur = GetTickCount();
-        if (dwTimeStart == 0)
-            dwTimeStart = dwTimeCur;
-        t = (dwTimeCur - dwTimeStart) / 1000.0f;
-           
-        auto mtr = Matrix::rotateY(t);
-        auto mtt = Matrix::translate(Vector3(0.0f, -1.0f, 0.0f));
-        world = mtr * mtt;
-        
         // Zバッファーのクリア
         deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-        ConstantBuffer cb;
-        cb.world      = Matrix::transpose(world);
-        cb.view       = Matrix::transpose(view);
-        cb.projection = Matrix::transpose(projection);
-        deviceContext->UpdateSubresource(constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
-
-        deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
-        deviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
-        deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
-        deviceContext->DrawIndexed(36, 0, 0);
     }
+
+    //void DirectX11::render(Matrix &mtWorld, Color &color)
+    //{
+    //    //// 回転
+    //    //static float t = 0.0f;
+    //    //static DWORD dwTimeStart = 0;
+    //    //DWORD dwTimeCur = GetTickCount();
+    //    //if (dwTimeStart == 0)
+    //    //    dwTimeStart = dwTimeCur;
+    //    //t = (dwTimeCur - dwTimeStart) / 1000.0f;
+    //    //   
+    //    //auto mtr = Matrix::rotateY(t);
+    //    //auto mtt = Matrix::translate(Vector3(0.0f, -1.0f, 0.0f));
+    //    //world = mtr * mtt;
+    //    
+    //    // Zバッファーのクリア
+    //    deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    //    ConstantBuffer cb;
+    //    cb.world      = Matrix::transpose(mtWorld);
+    //    cb.view       = Matrix::transpose(view);
+    //    cb.projection = Matrix::transpose(projection);
+    //    deviceContext->UpdateSubresource(constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
+
+    //    deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
+    //    deviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
+    //    deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
+    //    deviceContext->DrawIndexed(36, 0, 0);
+    //}
 
     // フレームの終了
     void DirectX11::endFrame() const
@@ -64,9 +64,40 @@ namespace Lib
         swapChain->Present(0, 0);
     }
 
-    // 初期化
-    HRESULT DirectX11::initDevice()
+    ComPtr<ID3D11Device> DirectX11::getDevice()
     {
+        return device;
+    }
+
+    ComPtr<ID3D11DeviceContext> DirectX11::getDeviceContext()
+    {
+        return deviceContext;
+    }
+
+    void DirectX11::setViewMatrix(const Matrix & _view)
+    {
+        view = _view;
+    }
+
+    Matrix & DirectX11::getViewMatrix()
+    {
+        return view;
+    }
+
+    void DirectX11::setProjectionMatrix(const Matrix & _projection)
+    {
+        projection = _projection;
+    }
+
+    Matrix & DirectX11::getProjectionMatrix()
+    {
+        return projection;
+    }
+
+    // 初期化
+    HRESULT DirectX11::initDevice(std::shared_ptr<Window> _window)
+    {
+        window = _window;
         UINT createDeviceFlags = 0;
 #ifdef _DEBUG
         createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -200,182 +231,182 @@ namespace Lib
         deviceContext->RSSetViewports(1, &vp);
 
         // VertexShaderの読み込み
-        auto VSBlob = shaderCompile(L"VertexShader.hlsl", "VS", "vs_4_0");
-        if (VSBlob == nullptr) {
-            MessageBox(nullptr, L"shaderCompile()の失敗(VS)", L"Error", MB_OK);
-            return hr;
-        }
+        //auto VSBlob = shaderCompile(L"VertexShader.hlsl", "VS", "vs_4_0");
+        //if (VSBlob == nullptr) {
+        //    MessageBox(nullptr, L"shaderCompile()の失敗(VS)", L"Error", MB_OK);
+        //    return hr;
+        //}
 
-        // VertexShaderの作成
-        hr = device->CreateVertexShader(VSBlob->GetBufferPointer(), VSBlob->GetBufferSize(), nullptr, vertexShader.GetAddressOf());
-        if (FAILED(hr)) {
-            MessageBox(nullptr, L"VSコンパイル失敗", L"Error", MB_OK);
-            return hr;
-        }
+        //// VertexShaderの作成
+        //hr = device->CreateVertexShader(VSBlob->GetBufferPointer(), VSBlob->GetBufferSize(), nullptr, vertexShader.GetAddressOf());
+        //if (FAILED(hr)) {
+        //    MessageBox(nullptr, L"VSコンパイル失敗", L"Error", MB_OK);
+        //    return hr;
+        //}
 
-        // InputLayouの定義
-        D3D11_INPUT_ELEMENT_DESC layout[] = {
-            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        };
-        UINT numElements = ARRAYSIZE(layout);
+        //// InputLayouの定義
+        //D3D11_INPUT_ELEMENT_DESC layout[] = {
+        //    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        //    { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        //};
+        //UINT numElements = ARRAYSIZE(layout);
 
-        // InputLayoutの作成
-        hr = device->CreateInputLayout(layout, numElements, VSBlob->GetBufferPointer(), VSBlob->GetBufferSize(), vertexLayout.GetAddressOf());
-        if (FAILED(hr)) {
-            MessageBox(NULL, L"CreateInputLayoutの失敗(VS)", L"Error", MB_OK);
-            return hr;
-        }
+        //// InputLayoutの作成
+        //hr = device->CreateInputLayout(layout, numElements, VSBlob->GetBufferPointer(), VSBlob->GetBufferSize(), vertexLayout.GetAddressOf());
+        //if (FAILED(hr)) {
+        //    MessageBox(NULL, L"CreateInputLayoutの失敗(VS)", L"Error", MB_OK);
+        //    return hr;
+        //}
 
-        // InputLayoutをセット
-        deviceContext->IASetInputLayout(vertexLayout.Get());
+        //// InputLayoutをセット
+        //deviceContext->IASetInputLayout(vertexLayout.Get());
 
-        // PixelShaderの読み込み
-        auto PSBlob = shaderCompile(L"PixelShader.hlsl", "PS", "ps_4_0");
-        if (PSBlob == nullptr) {
-            MessageBox(nullptr, L"shaderCompile()の失敗(VS)", L"Error", MB_OK);
-            return hr;
-        }
+        //// PixelShaderの読み込み
+        //auto PSBlob = shaderCompile(L"PixelShader.hlsl", "PS", "ps_4_0");
+        //if (PSBlob == nullptr) {
+        //    MessageBox(nullptr, L"shaderCompile()の失敗(VS)", L"Error", MB_OK);
+        //    return hr;
+        //}
 
-        // VertexShaderの作成
-        hr = device->CreatePixelShader(PSBlob->GetBufferPointer(), PSBlob->GetBufferSize(), nullptr, pixelShader.GetAddressOf());
-        if (FAILED(hr)) {
-            MessageBox(nullptr, L"createPixelShader()の失敗", L"Error", MB_OK);
-            return hr;
-        }
+        //// VertexShaderの作成
+        //hr = device->CreatePixelShader(PSBlob->GetBufferPointer(), PSBlob->GetBufferSize(), nullptr, pixelShader.GetAddressOf());
+        //if (FAILED(hr)) {
+        //    MessageBox(nullptr, L"createPixelShader()の失敗", L"Error", MB_OK);
+        //    return hr;
+        //}
 
-        // VertexBufferの定義
-        SimpleVertex vertices[] =
-        {
-            { { -1.0f,  1.0f, -1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
-            { {  1.0f,  1.0f, -1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-            { {  1.0f,  1.0f,  1.0f }, { 0.0f, 1.0f, 1.0f, 1.0f } },
-            { { -1.0f,  1.0f,  1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-            { { -1.0f, -1.0f, -1.0f }, { 1.0f, 0.0f, 1.0f, 1.0f } },
-            { {  1.0f, -1.0f, -1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f } },
-            { {  1.0f, -1.0f,  1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
-            { { -1.0f, -1.0f,  1.0f }, { 0.0f, 0.0f, 0.0f, 1.0f } },
-        };
+        //// VertexBufferの定義
+        //SimpleVertex vertices[] =
+        //{
+        //    { { -1.0f,  1.0f, -1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
+        //    { {  1.0f,  1.0f, -1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+        //    { {  1.0f,  1.0f,  1.0f }, { 0.0f, 1.0f, 1.0f, 1.0f } },
+        //    { { -1.0f,  1.0f,  1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+        //    { { -1.0f, -1.0f, -1.0f }, { 1.0f, 0.0f, 1.0f, 1.0f } },
+        //    { {  1.0f, -1.0f, -1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f } },
+        //    { {  1.0f, -1.0f,  1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
+        //    { { -1.0f, -1.0f,  1.0f }, { 0.0f, 0.0f, 0.0f, 1.0f } },
+        //};
 
-        D3D11_BUFFER_DESC bd;
-        ZeroMemory(&bd, sizeof(bd));
-        bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(SimpleVertex) * 8;
-        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        bd.CPUAccessFlags = 0;
+        //D3D11_BUFFER_DESC bd;
+        //ZeroMemory(&bd, sizeof(bd));
+        //bd.Usage = D3D11_USAGE_DEFAULT;
+        //bd.ByteWidth = sizeof(SimpleVertex) * 8;
+        //bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        //bd.CPUAccessFlags = 0;
 
-        D3D11_SUBRESOURCE_DATA initData;
-        ZeroMemory(&initData, sizeof(initData));
-        initData.pSysMem = vertices;
-        hr = device->CreateBuffer(&bd, &initData, vertexBuffer.GetAddressOf());
-        if (FAILED(hr)) {
-            MessageBox(nullptr, L"createBuffer()の失敗", L"Error", MB_OK);
-            return hr;
-        }
+        //D3D11_SUBRESOURCE_DATA initData;
+        //ZeroMemory(&initData, sizeof(initData));
+        //initData.pSysMem = vertices;
+        //hr = device->CreateBuffer(&bd, &initData, vertexBuffer.GetAddressOf());
+        //if (FAILED(hr)) {
+        //    MessageBox(nullptr, L"createBuffer()の失敗", L"Error", MB_OK);
+        //    return hr;
+        //}
 
-        // VertexBufferをセット
-        UINT stride = sizeof(SimpleVertex);
-        UINT offset = 0;
-        deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+        //// VertexBufferをセット
+        //UINT stride = sizeof(SimpleVertex);
+        //UINT offset = 0;
+        //deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
-        // 頂点バッファの作成
-        WORD indices[] =
-        {
-            3, 1, 0,
-            2, 1, 3,
+        //// 頂点バッファの作成
+        //WORD indices[] =
+        //{
+        //    3, 1, 0,
+        //    2, 1, 3,
 
-            0, 5, 4,
-            1, 5, 0,
+        //    0, 5, 4,
+        //    1, 5, 0,
 
-            3, 4, 7,
-            0, 4, 3,
+        //    3, 4, 7,
+        //    0, 4, 3,
 
-            1, 6, 5,
-            2, 6, 1,
+        //    1, 6, 5,
+        //    2, 6, 1,
 
-            2, 7, 6,
-            3, 7, 2,
+        //    2, 7, 6,
+        //    3, 7, 2,
 
-            6, 4, 5,
-            7, 4, 6,
-        };
-        bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(WORD) * 36; // 36頂点、12三角形
-        bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        bd.CPUAccessFlags = 0;
-        initData.pSysMem = indices;
-        hr = device->CreateBuffer(&bd, &initData, indexBuffer.GetAddressOf());
-        if (FAILED(hr)) {
-            MessageBox(nullptr, L"createBuffer()の失敗", L"Error", MB_OK);
-            return hr;
-        }
+        //    6, 4, 5,
+        //    7, 4, 6,
+        //};
+        //bd.Usage = D3D11_USAGE_DEFAULT;
+        //bd.ByteWidth = sizeof(WORD) * 36; // 36頂点、12三角形
+        //bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+        //bd.CPUAccessFlags = 0;
+        //initData.pSysMem = indices;
+        //hr = device->CreateBuffer(&bd, &initData, indexBuffer.GetAddressOf());
+        //if (FAILED(hr)) {
+        //    MessageBox(nullptr, L"createBuffer()の失敗", L"Error", MB_OK);
+        //    return hr;
+        //}
 
-        // 頂点バッファをセット
-        deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+        //// 頂点バッファをセット
+        //deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
-        // PrimitiveTopologyをセット
-        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        //// PrimitiveTopologyをセット
+        //deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-        // ConstantBufferの作成
-        bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(ConstantBuffer);
-        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        bd.CPUAccessFlags = 0;
-        hr = device->CreateBuffer(&bd, nullptr, constantBuffer.GetAddressOf());
-        if (FAILED(hr)) {
-            MessageBox(nullptr, L"createBuffer()の失敗", L"Error", MB_OK);
-            return hr;
-        }
+        //// ConstantBufferの作成
+        //bd.Usage = D3D11_USAGE_DEFAULT;
+        //bd.ByteWidth = sizeof(ConstantBuffer);
+        //bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        //bd.CPUAccessFlags = 0;
+        //hr = device->CreateBuffer(&bd, nullptr, constantBuffer.GetAddressOf());
+        //if (FAILED(hr)) {
+        //    MessageBox(nullptr, L"createBuffer()の失敗", L"Error", MB_OK);
+        //    return hr;
+        //}
 
         // WorldMatrixの初期化
-        world = Matrix::Identify;
+        //world = Matrix::Identify;
 
-        // ViewMatrixの初期化
-        Vector3 eye = Vector3(0.0f, 1.0f, -5.0f); // カメラの座標
-        Vector3 at  = Vector3(0.0f, 1.0f,  0.0f); // 注視対象
-        Vector3 up  = Vector3(0.0f, 1.0f,  0.0f); // 現在のワールド座標の上方向
-        view = Matrix::LookAtLH(eye, at, up);
+        //// ViewMatrixの初期化
+        //Vector3 eye = Vector3(0.0f, 1.0f, -5.0f); // カメラの座標
+        //Vector3 at  = Vector3(0.0f, 1.0f,  0.0f); // 注視対象
+        //Vector3 up  = Vector3(0.0f, 1.0f,  0.0f); // 現在のワールド座標の上方向
+        //view = Matrix::LookAtLH(eye, at, up);
 
-        // ProjectionMatrixの初期化
-        projection = Matrix::perspectiveFovLH(Lib::PIDIV2, windowWidth / static_cast<float>(windowHeight), 0.01f, 100.0f);
+        //// ProjectionMatrixの初期化
+        //projection = Matrix::perspectiveFovLH(Lib::PIDIV2, windowWidth / static_cast<float>(windowHeight), 0.01f, 100.0f);
         return S_OK;
     }
 
-    // シェーダーの読み込み
-    Microsoft::WRL::ComPtr<ID3DBlob> DirectX11::shaderCompile(WCHAR * filename, LPCSTR entryPoint, LPCSTR shaderModel)
-    {
-        Microsoft::WRL::ComPtr<ID3DBlob> blobOut = nullptr;
-        Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-
-        DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined(DEBUG) || defined(_DEBUG)
-        shaderFlags |= D3DCOMPILE_DEBUG;
-#endif
-
-        auto hr = D3DCompileFromFile(
-            filename,
-            nullptr,
-            nullptr,
-            entryPoint,
-            shaderModel,
-            shaderFlags,
-            0,
-            blobOut.GetAddressOf(),
-            errorBlob.GetAddressOf()
-        );
-
-        if (FAILED(hr)) {
-            if (errorBlob != nullptr) {
-                MessageBox(window->getHWND(), static_cast<LPWSTR>(errorBlob->GetBufferPointer()), nullptr, MB_OK);
-            }
-            if (errorBlob) {
-                errorBlob.Get()->Release();
-            }
-        }
-        if (errorBlob) {
-            errorBlob.Get()->Release();
-        }
-
-        return Microsoft::WRL::ComPtr<ID3DBlob>(blobOut);
-    }
+//    // シェーダーの読み込み
+//    Microsoft::WRL::ComPtr<ID3DBlob> DirectX11::shaderCompile(WCHAR * filename, LPCSTR entryPoint, LPCSTR shaderModel)
+//    {
+//        Microsoft::WRL::ComPtr<ID3DBlob> blobOut = nullptr;
+//        Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
+//
+//        DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+//#if defined(DEBUG) || defined(_DEBUG)
+//        shaderFlags |= D3DCOMPILE_DEBUG;
+//#endif
+//
+//        auto hr = D3DCompileFromFile(
+//            filename,
+//            nullptr,
+//            nullptr,
+//            entryPoint,
+//            shaderModel,
+//            shaderFlags,
+//            0,
+//            blobOut.GetAddressOf(),
+//            errorBlob.GetAddressOf()
+//        );
+//
+//        if (FAILED(hr)) {
+//            if (errorBlob != nullptr) {
+//                MessageBox(window->getHWND(), static_cast<LPWSTR>(errorBlob->GetBufferPointer()), nullptr, MB_OK);
+//            }
+//            if (errorBlob) {
+//                errorBlob.Get()->Release();
+//            }
+//        }
+//        if (errorBlob) {
+//            errorBlob.Get()->Release();
+//        }
+//
+//        return Microsoft::WRL::ComPtr<ID3DBlob>(blobOut);
+//    }
 }
