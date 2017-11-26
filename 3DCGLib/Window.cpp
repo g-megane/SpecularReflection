@@ -3,9 +3,10 @@
 namespace Lib
 {
     // コンストラクタ
-    Window::Window(const LPCWSTR _windowName)
+    Window::Window(const LPCWSTR _windowName, const LONG _windowWidth, const LONG _windowHeight)
         :windowName(_windowName)
     {
+        windowRect = { 0, 0, _windowWidth, _windowHeight };
         Initialize();
     }
 
@@ -62,7 +63,6 @@ namespace Lib
         }
 
         // ウィンドウの作成
-        windowRect = { 0, 0, static_cast<LONG>(1024), static_cast<LONG>(768) };
         AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
         hWnd = CreateWindow(
             windowName,				// ウィンドウクラス名

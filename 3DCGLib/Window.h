@@ -20,7 +20,7 @@ namespace Lib
     class Window
     {
     public:
-        Window(const LPCWSTR _windowName);
+        Window(const LPCWSTR _windowName, const LONG _windowWidth, const LONG _windowHeight);
         ~Window();
 
         MSG Update();
