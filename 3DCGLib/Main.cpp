@@ -21,15 +21,15 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     // ViewMatrixの初期化
     Vector3 eye = Vector3(0.0f, 1.0f, -5.0f); // カメラの座標
-    Vector3 at = Vector3(0.0f, 1.0f, 0.0f); // 注視対象
-    Vector3 up = Vector3(0.0f, 1.0f, 0.0f); // 現在のワールド座標の上方向
-    auto view = Matrix::LookAtLH(eye, at, up);
+    Vector3 at  = Vector3(0.0f, 1.0f,  0.0f); // 注視対象
+    Vector3 up  = Vector3(0.0f, 1.0f,  0.0f); // 現在のワールド座標の上方向
+    auto view   = Matrix::LookAtLH(eye, at, up);
     directX.setViewMatrix(view);
 
     // ProjectionMatrixの初期化
-    LONG windowWidth = w->getWindowRect().left - w->getWindowRect().right;
+    LONG windowWidth  = w->getWindowRect().right  - w->getWindowRect().left;
     LONG windowHeight = w->getWindowRect().bottom - w->getWindowRect().top;
-    auto projection = Matrix::perspectiveFovLH(PIDIV2, windowWidth / static_cast<float>(windowHeight), 0.01f, 100.0f);
+    auto projection   = Matrix::perspectiveFovLH(PIDIV2, windowWidth / static_cast<float>(windowHeight), 0.01f, 100.0f);
     directX.setProjectionMatrix(projection);
     
     Model model = Model();
