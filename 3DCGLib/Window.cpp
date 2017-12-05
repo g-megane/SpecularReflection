@@ -18,7 +18,6 @@ namespace Lib
     // èâä˙âª
     int Window::Initialize()
     {
-        //windowSize = Dimention<int>(static_cast<int>(WINDOW_WIDTH), static_cast<int>(WINDOW_HEIGHT));
         auto hInstance = GetModuleHandle(nullptr);
         auto nCmdShow  = SW_SHOWNORMAL;
 
