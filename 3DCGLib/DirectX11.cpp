@@ -1,6 +1,5 @@
 #include <d3dcompiler.h>
 #include "DirectX11.h"
-#include "MathConstantValues.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
 
