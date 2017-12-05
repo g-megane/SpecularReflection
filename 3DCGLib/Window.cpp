@@ -20,7 +20,7 @@ namespace Lib
     {
         //windowSize = Dimention<int>(static_cast<int>(WINDOW_WIDTH), static_cast<int>(WINDOW_HEIGHT));
         auto hInstance = GetModuleHandle(nullptr);
-        auto nCmdShow = SW_SHOWNORMAL;
+        auto nCmdShow  = SW_SHOWNORMAL;
 
         if (FAILED(InitWindow(hInstance, nCmdShow))) {
             OutputDebugString(L"InitWindow()の失敗");
@@ -39,6 +39,11 @@ namespace Lib
     RECT Window::getWindowRect() const
     {
         return windowRect;
+    }
+
+    bool Window::getKeyDown(BYTE key)
+    {
+        return keyTbl[key] & 0x80;
     }
     
     // ウィンドウの初期化
@@ -119,7 +124,9 @@ namespace Lib
     MSG Window::Update()
     {
         MSG msg = { 0 };
-
+        if (!GetKeyboardState(keyTbl)) {
+            MessageBox(hWnd, L"キー情報の取得に失敗", L"ERROR", MB_OK);
+        }
 
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);

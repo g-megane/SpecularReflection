@@ -26,6 +26,7 @@ namespace Lib
         MSG Update();
         HWND getHWND() const;
         RECT getWindowRect() const;
+        bool getKeyDown(BYTE key);
 
     private:
         HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
@@ -35,6 +36,7 @@ namespace Lib
         LPCWSTR windowName;
         HWND hWnd;
         RECT windowRect;
+        BYTE keyTbl[256];
     };
 }
 #endif
