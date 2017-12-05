@@ -162,7 +162,7 @@
   <ItemGroup>
     <ClInclude Include="Color.h" />
     <ClInclude Include="DirectX11.h" />
-    <ClInclude Include="MathConstantValues.h" />
+    <ClInclude Include="MyMath.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Singleton.h" />
