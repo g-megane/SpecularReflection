@@ -42,6 +42,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     float rotX = 0.0f;
     float rotY = 0.0f;
 
+    // 説明
+    MessageBox(w->getHWND(), L"「W」「A」「S」「D」でモデルの回転", L"操作説明", MB_OK | MB_ICONINFORMATION);
+
     // 更新処理
     while (w->Update().message != WM_QUIT) {
         directX.begineFrame();
