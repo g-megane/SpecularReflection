@@ -54,7 +54,7 @@ namespace Lib
         static Matrix transpose(const Matrix matrix);
 
         // 左手座標系ビュー行列の作成
-        static Matrix LookAtLH(const Vector3 cameraPos, const Vector3 cameraTarget, const Vector3 cameraUpVec);
+        static Matrix LookAtLH(const Vector3 &cameraPos, const Vector3 &cameraTarget, const Vector3 &cameraUpVec);
 
         // 左手座標系パースペクティブ射影行列を作成
         static Matrix perspectiveFovLH(float fieldOfViewY, float aspectRatio, float znearPlane, float zfarPlane);

@@ -103,10 +103,10 @@ namespace Lib
         );
     }
     // 左手座標系ビュー行列の作成
-    Matrix Matrix::LookAtLH(const Vector3 cameraPos, const Vector3 cameraTarget, const Vector3 cameraUpVec)
+    Matrix Matrix::LookAtLH(const Vector3 &cameraPos, const Vector3 &cameraTarget, const Vector3 &cameraUpVec)
     {
-        Vector3 zAxis = Vector3(cameraTarget - cameraPos).normalize();
-        Vector3 xAxis = Vector3(cameraUpVec.cross(zAxis)).normalize();
+        Vector3 zAxis = (cameraTarget - cameraPos).normalize();
+        Vector3 xAxis = (cameraUpVec.cross(zAxis)).normalize();
         Vector3 yAxis = zAxis.cross(xAxis);
 
         return Matrix(
