@@ -52,7 +52,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         world = mtr * mtt;
 
         model.setWorldMatrix(world);
-        model.render(world, Lib::Color(Lib::Color::BLUE));
+        model.render(Lib::Color(Lib::Color::BLUE));
 
         directX.endFrame();
     }
