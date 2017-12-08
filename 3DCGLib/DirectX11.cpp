@@ -25,6 +25,7 @@ namespace Lib
     // フレームの開始
     void DirectX11::begineFrame() const
     {
+        // 画面のクリア
         float ClearColor[4]{ 0.0f, 0.125f, 0.3f, 1.0f };
         deviceContext->ClearRenderTargetView(renderTargetView.Get(), ClearColor);
         // Zバッファーのクリア
