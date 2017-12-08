@@ -22,7 +22,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     directX.initDevice(w);
 
     // ViewMatrixの初期化
-    Vector3 eye = Vector3(0.0f, 1.0f, -5.0f); // カメラの座標
+    Vector3 eye = Vector3(0.0f, 1.0f, -7.0f); // カメラの座標
     Vector3 at  = Vector3(0.0f, 1.0f,  0.0f); // 注視対象
     Vector3 up  = Vector3::UP;                // 現在のワールド座標の上方向
     auto view   = Matrix::LookAtLH(eye, at, up);
@@ -43,7 +43,11 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     float rotY = 0.0f;
 
     // 説明
-    MessageBox(w->getHWND(), L"「W」「A」「S」「D」でモデルの回転", L"操作説明", MB_OK | MB_ICONINFORMATION);
+    MessageBox(
+        w->getHWND(),
+        L"平行光源：〇、点光源：×、スポットライト：× \r\n 拡散光：×、環境光：×、反射光：× \r\n「W」「A」「S」「D」でモデルの回転",
+        L"操作説明",
+        MB_OK | MB_ICONINFORMATION);
 
     // 更新処理
     while (w->Update().message != WM_QUIT) {
