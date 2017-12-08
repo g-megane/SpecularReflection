@@ -3,25 +3,30 @@ cbuffer ConstantBuffer : register(b0)
     matrix World;
     matrix View;
     matrix Projection;
+    float4 vLightDir[2];
+    float4 vLightColor[2];
+    float4 vOutputColor;
 }
 
-struct VS_OUTPUT
+struct VS_INPUT
 {
-    float4 Pos : SV_POSITION;
-    float4 Color : COLOR0;
+    float4 Pos : POSITION;
+    float3 Norm : NORMAL;
 };
 
-VS_OUTPUT VS(float4 Pos : POSITION, float4 Color : COLOR)
+struct PS_INPUT
 {
-    VS_OUTPUT output = (VS_OUTPUT)0;
-    output.Pos = mul(Pos, World);
+    float4 Pos : SV_POSITION;
+    float3 Norm : TEXCOORD0;
+};
+
+PS_INPUT VS(VS_INPUT input)
+{
+    PS_INPUT output = (PS_INPUT)0;
+    output.Pos = mul(input.Pos, World);
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
-    output.Color = Color;
+    output.Norm = mul(float4(input.Norm, 0.0f), World).xyz;
+
     return output;
 }
-
-//float4 PS(VS_OUTPUT input) : SV_Target
-//{
-//    return input.color;
-//}
