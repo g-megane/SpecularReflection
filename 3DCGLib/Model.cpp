@@ -32,7 +32,7 @@ namespace Lib
             { 1.0f, 1.0f, 1.0f, 1.0f },
             { 0.0f, 1.0f, 0.0f, 1.0f },
         };
-        // ‰Šú‰»‚ÌƒJƒ‰[
+        // ‰Šú‰»‚ÌF
         float defaultOutputColor[4]
         {
             0.0f, 0.0f, 0.0f, 0.0f 
