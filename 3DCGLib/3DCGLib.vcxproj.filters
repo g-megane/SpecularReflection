@@ -67,13 +67,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="PSLight.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="PSSolid.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PSSolid.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PSLight.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
