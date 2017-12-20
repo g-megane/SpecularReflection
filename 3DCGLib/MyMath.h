@@ -10,7 +10,7 @@ namespace Lib
     class MyMath
     {
     public:
-        static const float PIDIV;
+        static const float PI;
         static const float PIDIV2;
         static const float PIDIV4;
         static const float PI2;
@@ -34,11 +34,6 @@ namespace Lib
             return value_;
         }
     };
-
-    const float MyMath::PIDIV  = 3.141592741f;
-    const float MyMath::PIDIV2 = 1.570796371f;
-    const float MyMath::PIDIV4 = 0.7853981853f;
-    const float MyMath::PI2    = 6.283185482f;
 }
 
 #endif
