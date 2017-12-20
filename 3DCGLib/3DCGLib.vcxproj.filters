@@ -73,7 +73,11 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="PSLight.hlsl" />
-    <FxCompile Include="PSSolid.hlsl" />
+    <FxCompile Include="PSLight.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PSSolid.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
