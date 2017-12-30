@@ -35,7 +35,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     directX.setProjectionMatrix(projection);
     
     // モデルの作成
-    Model model = Model();
+    Model model = Model(36);
     Matrix world;
     world = Matrix::Identify;
 
@@ -45,7 +45,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     // 説明
     MessageBox(
         w->getHWND(),
-        L"平行光源：〇、点光源：×、スポットライト：× \r\n 拡散光：×、環境光：×、反射光：× \r\n「W」「A」「S」「D」でモデルの回転",
+        L"平行光源：〇、点光源：×、スポットライト：× \r\n 拡散光：×、環境光：×、反射光：◯ \r\n「W」「A」「S」「D」でモデルの回転",
         L"操作説明",
         MB_OK | MB_ICONINFORMATION);
 
