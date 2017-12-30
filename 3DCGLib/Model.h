@@ -12,6 +12,7 @@ namespace Lib
     {
     public:
         Model();
+        Model(const int SEGMENT);
         ~Model();
 
         void render(Color &color);
@@ -21,6 +22,7 @@ namespace Lib
         
     private:
         HRESULT init();
+        HRESULT initSqhere(const int SEGMENT);
         ComPtr<ID3DBlob> shaderCompile(WCHAR* filename, LPCSTR entryPoint, LPCSTR shaderModel);
 
         struct SimpleVertex
@@ -34,9 +36,10 @@ namespace Lib
             Matrix world;
             Matrix view;
             Matrix projection;
-            float vLightDire[2][4];
-            float vLightColor[2][4];
-            float vOutputColor[4];
+            float vEyePos[4];
+            float vLightDire[4];
+            float vLightColor[4];
+            float vSpecular[4];
         };
 
         ComPtr<ID3D11VertexShader>     vertexShader;
@@ -48,6 +51,7 @@ namespace Lib
         ComPtr<ID3D11Buffer>           constantBuffer;
 
         Matrix world;
+        int vertexCount;
     };
 }
 #endif
