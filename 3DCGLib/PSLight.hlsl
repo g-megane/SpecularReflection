@@ -1,33 +1,37 @@
 // コンスタントバッファ
 cbuffer ConstantBuffer : register(b0)
 {
-    matrix World;          // ワールド行列
-    matrix View;           // ビュー行列
-    matrix Projection;     // 射影行列
-    float4 vLightDir[2];   // ライトの座標
-    float4 vLightColor[2]; // ライトの色
-    float4 vOutputColor;   // ライト以外のモデルの色
+    matrix World;       // ワールド行列
+    matrix View;        // ビュー行列
+    matrix Projection;  // 射影行列
+    float4 vEyePos;     // 視点の座標
+    float4 vLightDir;   // ライトの座標
+    float4 vLightColor; // ライトの色
+    float4 vSpecular;   // ライト以外のモデルの色
 }
 
 struct PS_INPUT
 {
     float4 Pos : SV_POSITION; // 現在のピクセル位置
-    float3 Norm : TEXCOORD0;  // 法線
+    float4 PosW : POSITION0;  // オブジェクトのワールド座標
+    float4 NorW : TEXCOORD0;  // 法線
 };
 
 // ピクセルシェーダー(ライティング)
 float4 PSLight(PS_INPUT input) : SV_TARGET
 {
-    float4 finalColor = 0;
+    float3 l; // 正規化した光源ベクトル
+    float3 n; // 正規化した法線ベクトル
+    float3 r; // 正規化した正反射ベクトル
+    float3 v; // 正規化した視線ベクトル
+    float  i; // rとｖの内積を取り、光沢度係数をべき乗した結果
 
-    // 2ヶ所のライトを計算
-    for (int i = 0; i < 2; ++i) {
-        // ライトベクトルと法線ベクトルの内積(dot)を計算
-        // 求めた内積の値でで光の当たり具合が-1 ～ 1の範囲で求まる(saturateで0 ～ １に抑制)
-        // 求めた内積とライトから最終的な面の値を算出
-        finalColor += saturate(dot((float3)vLightDir[i], input.Norm) * vLightColor[i]);
-    }
-    finalColor.a = 1;
+    // -- 鏡面反射 --
+    l = normalize(vLightDir.xyz - input.PosW.xyz);
+    n = normalize(input.NorW.xyz);
+    r = 2.0 * n * dot(n , l) - l;
+    v = normalize(vEyePos.xyz - input.PosW.xyz);
+    i = pow(saturate(dot(r, v)), vSpecular.w);
 
-	return finalColor;
+    return float4(i * vSpecular.xyz * vLightColor.xyz, 1.0);
 }
