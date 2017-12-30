@@ -18,5 +18,5 @@ struct PS_INPUT
 // ピクセルシェーダー(ライティングなし)
 float4 PSSolid(PS_INPUT input) : SV_Target
 {
-    return vOutputColor;
+    return float4(1.0f, 1.0f, 1.0f, 1.0f);
 }
