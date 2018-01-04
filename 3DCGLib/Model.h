@@ -19,6 +19,8 @@ namespace Lib
 
         void setWorldMatrix(Matrix &_world);
         Matrix getWorldMatrix() const;
+
+        Vector3& getLightPos();
         
     private:
         HRESULT init();
@@ -52,6 +54,7 @@ namespace Lib
 
         Matrix world;
         int vertexCount;
+        Vector3 lightPos;
     };
 }
 #endif

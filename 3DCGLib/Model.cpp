@@ -11,6 +11,7 @@ namespace Lib
     {
         world = Matrix::Identify;
         vertexCount = 0;
+        lightPos.move(0.0f, 0.5f, 0.0f);
         init();
     }
 
@@ -18,6 +19,7 @@ namespace Lib
     {
         world = Matrix::Identify;
         vertexCount = 0;
+        lightPos.move(0.0f, 0.5f, 0.0f);
         initSqhere(SEGMENT);
     }
 
@@ -34,7 +36,7 @@ namespace Lib
         // ライトの位置
         float vLightDire[4] = 
         {
-            0.5f,  0.5f, -0.5f, 1.0f,
+            lightPos.x,  lightPos.y, lightPos.z, 1.0f,
         };
         // ライトの色
         float vLightColor[4] = 
@@ -52,7 +54,7 @@ namespace Lib
         cb.world      = Matrix::transpose(world);
         cb.view       = Matrix::transpose(directX.getViewMatrix());
         cb.projection = Matrix::transpose(directX.getProjectionMatrix());
-        float eye[4] = { -directX.getViewMatrix().m41, -directX.getViewMatrix().m42, -directX.getViewMatrix().m43, 0.0f };
+        float eye[4]  = { -directX.getViewMatrix().m41, -directX.getViewMatrix().m42, -directX.getViewMatrix().m43, 0.0f };
         memcpy(cb.vEyePos, eye, sizeof(directX.getViewMatrix()));
         memcpy(cb.vLightDire, vLightDire, sizeof(vLightDire));
         memcpy(cb.vLightColor, vLightColor, sizeof(vLightColor));
@@ -92,6 +94,11 @@ namespace Lib
         return world;
     }
 
+    Vector3& Model::getLightPos()
+    {
+        return lightPos;
+    }
+
     // 初期化
     HRESULT Model::init()
     {
@@ -114,8 +121,8 @@ namespace Lib
 
         // InputLayouの定義
         D3D11_INPUT_ELEMENT_DESC layout[] = {
-            { "POSITION", 0,    DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            {   "NORMAL", 0,    DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            {   "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
         UINT numElements = ARRAYSIZE(layout);
 
