@@ -157,6 +157,7 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="MyMath.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -167,6 +168,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
