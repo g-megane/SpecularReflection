@@ -1,11 +1,17 @@
 #include <Windows.h>
+#include <sstream>
+#include <locale>
 #include "Window.h"
 #include "DirectX11.h"
 #include "Model.h"
 #include "Matrix.h"
 #include "MyMath.h"
+#include "Time.h"
 
 using namespace Lib;
+
+const float FPS = 60.0f;   // 実行したいfps
+const float SPEED = 0.001f; // ライトの移動速度
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -22,7 +28,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     directX.initDevice(w);
 
     // ViewMatrixの初期化
-    Vector3 eye = Vector3(0.0f, 1.0f, -7.0f); // カメラの座標
+    Vector3 eye = Vector3(0.0f, 1.0f, -15.0f); // カメラの座標
     Vector3 at  = Vector3(0.0f, 1.0f,  0.0f); // 注視対象
     Vector3 up  = Vector3::UP;                // 現在のワールド座標の上方向
     auto view   = Matrix::LookAtLH(eye, at, up);
@@ -38,9 +44,13 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     Model model = Model(36);
     Matrix world;
     world = Matrix::Identify;
+    model.setWorldMatrix(world);
 
-    float rotX = 0.0f;
-    float rotY = 0.0f;
+    // ライトの位置
+    float posX =  0.0f;
+    float posY =  0.5f;
+    float posZ = -2.0f;
+    model.getLightPos().translate(posX, posY, posZ);
 
     // 説明
     MessageBox(
@@ -50,33 +60,64 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         MB_OK | MB_ICONINFORMATION);
 
     // 更新処理
+    Time time = Time();
+    int fps = 0;
+    float countTime = 0.0f;
+    float deltaTime = 0.0f;
+    std::ostringstream oss;
+    WCHAR wcstr[50];
+    size_t size = 0;
+    setlocale(LC_ALL, "japanese"); // 後のmbstowcs_sの為の処理
+    
     while (w->Update().message != WM_QUIT) {
         directX.begineFrame();
 
-        // 回転
-        if (w->getKeyDown('W')) {
-            rotX += MyMath::PIDIV2 / 1800.0f;
+        // FPSの固定
+        if (!time.timeOver(1000.0f / FPS)) {
+            continue;
         }
-        if (w->getKeyDown('S')) {
-            rotX -= MyMath::PIDIV2 / 1800.0f;
+
+        deltaTime = time.getDeltaTime();
+        countTime += deltaTime;
+
+        // 1秒に１回行う処理
+        if (countTime > 1000.0f) {
+            // fpsをデバッガに出力
+            oss.str("");
+            oss << "fps: " << fps << std::endl;
+            mbstowcs_s(&size, wcstr, 20, oss.str().c_str(), _TRUNCATE);
+            OutputDebugString(wcstr);
+            // 変数のリセット
+            fps = 0;
+            countTime = 0.0f;
+        }
+        time.reset();
+        ++fps;
+
+        // 移動        
+        posX = posY = posZ = 0.0f;
+
+        if (w->getKeyDown('W')) {
+            posZ = SPEED * deltaTime;
+        }
+        else if (w->getKeyDown('S')) {
+            posZ = -SPEED * deltaTime;
         }
         if (w->getKeyDown('A')) {
-            rotY += MyMath::PIDIV2 / 1800.0f;
+            posX = -SPEED * deltaTime;
         }
-        if (w->getKeyDown('D')) {
-            rotY -= MyMath::PIDIV2 / 1800.0f;
+        else if (w->getKeyDown('D')) {
+            posX = SPEED * deltaTime;
+        }
+        if (w->getKeyDown('E')) {
+            posY = SPEED * deltaTime;
+        }
+        else if (w->getKeyDown('Q')) {
+            posY = -SPEED * deltaTime;
         }
 
-        // オーバーフローの制御
-        rotX = MyMath::rollup<float>(rotX, MyMath::PI2);
-        rotY = MyMath::rollup<float>(rotY, MyMath::PI2);
-
-        // モデルの制御
-        auto mtrX = Matrix::rotateX(rotX);
-        auto mtrY = Matrix::rotateY(rotY);
-        auto mtt  = Matrix::translate(Vector3(0.0f, -1.0f, 0.0f));
-        world = mtrX * mtrY * mtt;
-        model.setWorldMatrix(world);
+        // ライトのモデルの制御
+        model.getLightPos().translate(posX, posY, posZ);
 
         // 描画
         model.render(Lib::Color(Lib::Color::BLUE));
