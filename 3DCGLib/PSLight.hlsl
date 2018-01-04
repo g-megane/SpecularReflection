@@ -29,7 +29,7 @@ float4 PSLight(PS_INPUT input) : SV_TARGET
     // -- ‹¾–Ê”½ŽË --
     l = normalize(vLightDir.xyz - input.PosW.xyz);
     n = normalize(input.NorW.xyz);
-    r = 2.0 * n * dot(n , l) - l;
+    r = 2.0 * n * dot(n, l) - l;
     v = normalize(vEyePos.xyz - input.PosW.xyz);
     i = pow(saturate(dot(r, v)), vSpecular.w);
 
