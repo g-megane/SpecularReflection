@@ -10,7 +10,7 @@
 
 using namespace Lib;
 
-const float FPS = 60.0f;   // 実行したいfps
+const float FPS = 60.0f;    // 実行したいfps
 const float SPEED = 0.001f; // ライトの移動速度
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
@@ -55,7 +55,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     // 説明
     MessageBox(
         w->getHWND(),
-        L"平行光源：〇、点光源：×、スポットライト：× \r\n 拡散光：×、環境光：×、反射光：◯ \r\n「W」「A」「S」「D」でモデルの回転",
+        L"平行光源：〇、点光源：×、スポットライト：× \r\n 拡散光：×、環境光：×、反射光：◯ \r\n「W」「A」「S」「D」「E」「Q」でモデルの回転",
         L"操作説明",
         MB_OK | MB_ICONINFORMATION);
 
