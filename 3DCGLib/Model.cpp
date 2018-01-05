@@ -55,7 +55,7 @@ namespace Lib
         cb.view       = Matrix::transpose(directX.getViewMatrix());
         cb.projection = Matrix::transpose(directX.getProjectionMatrix());
         float eye[4]  = { -directX.getViewMatrix().m41, -directX.getViewMatrix().m42, -directX.getViewMatrix().m43, 0.0f };
-        memcpy(cb.vEyePos, eye, sizeof(directX.getViewMatrix()));
+        memcpy(cb.vEyePos, eye, sizeof(eye));
         memcpy(cb.vLightDire, vLightDire, sizeof(vLightDire));
         memcpy(cb.vLightColor, vLightColor, sizeof(vLightColor));
         memcpy(cb.vSpecular, vSpecular, sizeof(vSpecular));
@@ -129,7 +129,7 @@ namespace Lib
         // InputLayout‚Ìì¬
         hr = directX.getDevice()->CreateInputLayout(layout, numElements, VSBlob->GetBufferPointer(), VSBlob->GetBufferSize(), vertexLayout.GetAddressOf());
         if (FAILED(hr)) {
-            MessageBox(NULL, L"CreateInputLayout‚ÌŽ¸”s(VS)", L"Error", MB_OK);
+            MessageBox(nullptr, L"CreateInputLayout‚ÌŽ¸”s(VS)", L"Error", MB_OK);
             return hr;
         }
 
